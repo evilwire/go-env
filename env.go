@@ -19,10 +19,19 @@ type EnvReader interface {
 }
 
 
-type OsEnvReader struct{}
+type OsEnvReader struct{
+	lookup func(key string) (string, bool)
+}
+
+func NewOsEnvReader() *OsEnvReader {
+	return &OsEnvReader {
+		lookup: os.LookupEnv,
+	}
+}
+
 
 func (env *OsEnvReader) LookupEnv(key string) (string, bool) {
-	return os.LookupEnv(key)
+	return env.lookup(key)
 }
 
 func (env *OsEnvReader) HasKeys(keys []string) (bool, []string) {
@@ -33,7 +42,7 @@ func (env *OsEnvReader) HasKeys(keys []string) (bool, []string) {
 		}
 	}
 
-	return len(missingKeys) > 0, missingKeys
+	return len(missingKeys) == 0, missingKeys
 }
 
 type EnvUnmarshaler interface {
