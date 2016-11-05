@@ -5,23 +5,23 @@
 //
 // Consider the following example
 //
-// type CassandraConfig struct {
-// 	Hosts 		[]string `env: "CASSANDRA_HOSTS"`
-//	Port  		int	 `env: "CASSANDRA_PORT"`
-//	Consistency	string	 `env: "CASSANDRA_CONSISTENCY"`
-// }
+// 	type CassandraConfig struct {
+// 		Hosts 		[]string `env: "CASSANDRA_HOSTS"`
+//		Port  		int	 `env: "CASSANDRA_PORT"`
+//		Consistency	string	 `env: "CASSANDRA_CONSISTENCY"`
+//	 }
 //
-// func main() {
-// 	// setting up the config
-//	unmarshaller := DefaultEnvMarshaler {
-//		Environment: NewOsEnvReader(),
-//	}
-//	config := CassandraConfig{}
-//	unmarshaller.Unmarshal(&config)
+// 	func main() {
+// 		// setting up the config
+//		unmarshaller := DefaultEnvMarshaler {
+//			Environment: NewOsEnvReader(),
+//		}
+//		config := CassandraConfig{}
+//		unmarshaller.Unmarshal(&config)
 //
-//	// application logic
-//	// ...
-// }
+//		// application logic
+//		// ...
+//	 }
 //
 // We believe that the above is pretty straightforward and has a similar
 // flavor to the `encoding/json` library.
@@ -231,25 +231,25 @@ func (marshaler *DefaultEnvMarshaler) unmarshalStruct(t reflect.Type, envPrefix 
 //
 // Usage:
 //
-// import "github.com/evilwire/go-env"
+//	 import "github.com/evilwire/go-env"
 //
-// type CassandraConfig struct {
-// 	Hosts 		[]string `env: "CASSANDRA_HOSTS"`
-//	Port  		int	 `env: "CASSANDRA_PORT"`
-//	Consistency	string	 `env: "CASSANDRA_CONSISTENCY"`
-// }
+//	 type CassandraConfig struct {
+//		Hosts 		[]string `env: "CASSANDRA_HOSTS"`
+//		Port  		int	 `env: "CASSANDRA_PORT"`
+//		Consistency	string	 `env: "CASSANDRA_CONSISTENCY"`
+//	 }
 //
-// func main() {
-// 	// setting up the config
-//	unmarshaller := goenv.DefaultEnvMarshaler {
-//		Environment: goenv.NewOsEnvReader(),
-//	}
-//	config := CassandraConfig{}
-//	unmarshaller.Unmarshal(&config)
+//	 func main() {
+//		// setting up the config
+//		unmarshaller := goenv.DefaultEnvMarshaler {
+//			Environment: goenv.NewOsEnvReader(),
+//		}
+//		config := CassandraConfig{}
+//		unmarshaller.Unmarshal(&config)
 //
-//	// application logic
-//	// ...
-// }
+//		// application logic
+//		// ...
+//	 }
 //
 func (marshaler *DefaultEnvMarshaler) Unmarshal(i interface{}) error {
 	t := reflect.TypeOf(i)
