@@ -1,0 +1,7 @@
+# ignores IntelliJ IDEA project files
+.idea/
+.idea/*
+.idea
+
+# ignores the output of go test -coverprofile cover.out
+cover.out

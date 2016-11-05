@@ -1,4 +1,5 @@
-package util
+// Defines an object that parses values from strings.
+package goenv
 
 import (
 	"reflect"
@@ -9,8 +10,20 @@ import (
 )
 
 
+// A default way to parse a string into a specific primitive or pointer.
 type DefaultParser struct { }
 
+// Parse a string value for a specific type given by reflect.Type.
+// For example, ParseType might accept str="2" and reflect.Type=reflect.Uint
+// and parses the uint value of 2 returned as reflect.Value.
+//
+// In this particular case, we parse all numeric types, pointers, strings,
+// booleans, arrays and slices. The method handles Durations differently, though
+// under the hood, the type is treated the same way as int64. In particular, we
+// parse durations of the form `1m3s` and more generally, expects the string to be
+// parse-able via ParseDuration.
+//
+// If the object isn't one of the supported types, it throws an error.
 func (marshaler *DefaultParser) ParseType(str string, t reflect.Type) (reflect.Value, error) {
 	val := reflect.New(t).Elem()
 	tName := t.Name()
@@ -121,6 +134,13 @@ func (marshaler *DefaultParser) ParseType(str string, t reflect.Type) (reflect.V
 	return val, nil
 }
 
+// Unmarshals a string into any one of the string-parseable types, which include
+// (pointers of) numeric types, strings, booleans, arrays and slices. The method also
+// handles Duration separately.
+//
+// The method throws an error if the underlying interface is unsettable (see
+// https://golang.org/pkg/reflect/#Value.CanSet), or if parsing for the value resulted in
+// error
 func (marshaler *DefaultParser) Unmarshal(val string, i interface{}) error {
 	t := reflect.TypeOf(i)
 	v := reflect.ValueOf(i)
