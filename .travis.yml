@@ -4,4 +4,9 @@ go:
   - 1.7
   - master
 
-script: go test -v
+script: go test -v -coverpkg . -coverprofile cover.out
+
+# not sure what the heck this is, just doing what code climate
+# is telling me to do
+env:
+  CODECLIMATE_REPO_TOKEN: 4222ae2e27192b145e217cef28904ef975a640c2b119e4bd3f5554ce70d01389
