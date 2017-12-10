@@ -97,7 +97,7 @@ func (marshaler *DefaultParser) ParseType(str string, t reflect.Type) (reflect.V
 		}
 
 		if val.OverflowFloat(floatVal) {
-			return val, errors.Errorf("The value %d overflows type %s", floatVal, tName)
+			return val, errors.Errorf("The value %.4f overflows type %s", floatVal, tName)
 		}
 		val.SetFloat(floatVal)
 

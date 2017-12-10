@@ -106,7 +106,13 @@ func (o *Obj1) Equal(i interface{}) bool {
 }
 
 func (o *Obj1) String() string {
-	return fmt.Sprintf("%+v", o)
+	return fmt.Sprintf("%v", map[string]interface{} {
+		"A": o.A,
+		"B": o.B,
+		"C": o.C,
+		"D": o.D,
+		"E": o.E,
+	})
 }
 
 func TestUnmarshalObj1(t *testing.T) {
@@ -466,7 +472,10 @@ func (o *EnvMarshalerObj1) Equal(i interface{}) bool {
 }
 
 func (o *EnvMarshalerObj1) String() string {
-	return fmt.Sprintf("%+v", o)
+	return fmt.Sprintf("%v", map[string]interface{} {
+		"A": o.A,
+		"B": o.B,
+	})
 }
 
 func (o *EnvMarshalerObj1) UnmarshalEnv(env EnvReader) error {
