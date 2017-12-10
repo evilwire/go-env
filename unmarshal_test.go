@@ -594,7 +594,7 @@ func TestUnmarshalFloat(t *testing.T) {
 		}
 
 		if v != c.Expected {
-			t.Errorf("Expect marshal of %d but received %d instead", c.Expected, v)
+			t.Errorf("Expect marshal of %.2f but received %.2f instead", c.Expected, v)
 		}
 
 	}
@@ -659,7 +659,8 @@ func TestUnmarshalStringSlice(t *testing.T) {
 
 			for i, elt := range c.Expected {
 				if a[i] != elt {
-					t.Errorf("Expected element %i: %s, actual: %s",
+					t.Errorf("Expected element %d: %s, actual: %s",
+						i,
 						c.Expected[i],
 						a[i],
 					)
@@ -687,7 +688,7 @@ func TestUnmarshalIntSlice(t *testing.T) {
 		err := marshaler.Unmarshal(c.StrVal, &a)
 
 		if err != nil {
-			t.Error("Unmarshal should not raise error when handling \"%s\"", c.StrVal)
+			t.Errorf("Unmarshal should not raise error when handling \"%s\"", c.StrVal)
 		} else {
 			if len(c.Expected) != len(a) {
 				t.Errorf(
@@ -701,7 +702,8 @@ func TestUnmarshalIntSlice(t *testing.T) {
 
 			for i, elt := range c.Expected {
 				if a[i] != elt {
-					t.Errorf("Expected element %i: %d, actual: %d",
+					t.Errorf("Expected element %d: %d, actual: %d",
+						i,
 						c.Expected[i],
 						a[i])
 				}
@@ -816,7 +818,7 @@ func TestParseType(t *testing.T) {
 
 	actualVal := val.Elem().Uint()
 	if uint(actualVal) != testVal {
-		t.Error("Expected: %d, Actual: %d", testVal, actualVal)
+		t.Errorf("Expected: %d, Actual: %d", testVal, actualVal)
 	}
 }
 
