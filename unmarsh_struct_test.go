@@ -1,11 +1,11 @@
 package goenv
 
 import (
+	"errors"
+	"fmt"
+	"reflect"
 	"testing"
 	"time"
-	"fmt"
-	"errors"
-	"reflect"
 )
 
 type MockEnvReader struct {
@@ -31,14 +31,13 @@ func (reader *MockEnvReader) HasKeys(keys []string) (bool, []string) {
 	return len(missingEnvVars) == 0, missingEnvVars
 }
 
-
 type Equaler interface {
 	fmt.Stringer
 	Equal(i interface{}) bool
 }
 
 type TestCase struct {
-	Env map[string]string
+	Env      map[string]string
 	Expected Equaler
 }
 
@@ -48,7 +47,7 @@ func ref(s string) *string {
 
 func test(c TestCase, t *testing.T, obj Equaler) {
 	marsh := DefaultEnvMarshaler{
-		&MockEnvReader{ c.Env },
+		&MockEnvReader{c.Env},
 	}
 
 	err := marsh.Unmarshal(obj)
@@ -56,18 +55,17 @@ func test(c TestCase, t *testing.T, obj Equaler) {
 		t.Errorf("Unmarshal should not raise error. Error: %s", err.Error())
 	} else {
 		if !c.Expected.Equal(obj) {
-			t.Errorf("Marshalled object does not match expected. " +
-			"Expected: %+v, Actual: %+v",
+			t.Errorf("Marshalled object does not match expected. "+
+				"Expected: %+v, Actual: %+v",
 				c.Expected, obj,
 			)
 		}
 	}
 }
 
-
 func testFail(env map[string]string, t *testing.T, obj Equaler) {
 	marsh := DefaultEnvMarshaler{
-		&MockEnvReader{ env },
+		&MockEnvReader{env},
 	}
 
 	err := marsh.Unmarshal(obj)
@@ -78,10 +76,10 @@ func testFail(env map[string]string, t *testing.T, obj Equaler) {
 }
 
 type Obj1 struct {
-	A string `env:"OBJ1_A"`
-	B uint `env:"OBJ1_B"`
-	C bool `env:"OBJ1_C"`
-	D []int `env:"OBJ1_D"`
+	A string        `env:"OBJ1_A"`
+	B uint          `env:"OBJ1_B"`
+	C bool          `env:"OBJ1_C"`
+	D []int         `env:"OBJ1_D"`
 	E time.Duration `env:"OBJ1_E"`
 }
 
@@ -92,7 +90,7 @@ func (o *Obj1) Equal(i interface{}) bool {
 		firstly := other.A == o.A &&
 			other.B == o.B &&
 			other.C == o.C &&
-			other.E == o.E;
+			other.E == o.E
 
 		if !firstly {
 			return false
@@ -112,9 +110,9 @@ func (o *Obj1) String() string {
 }
 
 func TestUnmarshalObj1(t *testing.T) {
-	cases := []TestCase {
+	cases := []TestCase{
 		{
-			map[string]string {
+			map[string]string{
 				"OBJ1_A": "hello",
 				"OBJ1_B": "14",
 				"OBJ1_C": "true",
@@ -130,7 +128,7 @@ func TestUnmarshalObj1(t *testing.T) {
 			},
 		},
 		{
-			map[string]string {
+			map[string]string{
 				"OBJ1_A": "",
 				"OBJ1_B": fmt.Sprintf("%d", ^uint(0)),
 				"OBJ1_C": "false",
@@ -142,11 +140,11 @@ func TestUnmarshalObj1(t *testing.T) {
 				B: ^uint(0),
 				C: false,
 				D: []int{1},
-				E: 1 * time.Hour + 12 * time.Minute,
+				E: 1*time.Hour + 12*time.Minute,
 			},
 		},
 		{
-			map[string]string {
+			map[string]string{
 				"OBJ1_A": "亲蛙",
 				"OBJ1_B": "0",
 				"OBJ1_C": "true",
@@ -171,14 +169,14 @@ func TestUnmarshalObj1(t *testing.T) {
 
 func TestUnmarshalObj1Fail(t *testing.T) {
 	cases := []map[string]string{
-		map[string]string {
+		map[string]string{
 			"OBJ1_A": "abc",
 			"OBJ1_B": "-14",
 			"OBJ1_C": "true",
 			"OBJ1_D": "1, -2, 100, 3",
 			"OBJ1_E": "12m",
 		},
-		map[string]string {
+		map[string]string{
 			"OBJ1_B": "14",
 			"OBJ1_C": "true",
 			"OBJ1_D": "1, -2, 100, 3",
@@ -210,9 +208,9 @@ func (o *Obj2) String() string {
 }
 
 func TestUnmarshalObj2(t *testing.T) {
-	cases := []TestCase {
+	cases := []TestCase{
 		{
-			map[string]string {
+			map[string]string{
 				"OBJ2_A": "hello",
 			},
 			&Obj2{
@@ -245,7 +243,7 @@ func (o *NestedObj1) String() string {
 }
 
 func TestUnmarshalNestedObj1(t *testing.T) {
-	cases := []TestCase {
+	cases := []TestCase{
 		{
 			map[string]string{
 				"NESTED_OBJ1_A": "hello",
@@ -276,7 +274,7 @@ func TestUnmarshalNestedObj1(t *testing.T) {
 
 func TestUnmarshalNestedObj1Fail(t *testing.T) {
 	cases := []map[string]string{
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ1_A": "hello",
 			"NESTED_OBJ1_B": "-14",
 			"NESTED_OBJ1_C": "true",
@@ -284,22 +282,22 @@ func TestUnmarshalNestedObj1Fail(t *testing.T) {
 			"NESTED_OBJ1_E": "12m",
 			"NESTED_OBJ1_F": "65536",
 		},
-		map[string]string {
-			"OBJ1_A": "abc",
-			"OBJ1_B": "-14",
-			"OBJ1_C": "true",
-			"OBJ1_D": "1, -2, 100, 3",
-			"OBJ1_E": "12m",
+		map[string]string{
+			"OBJ1_A":        "abc",
+			"OBJ1_B":        "-14",
+			"OBJ1_C":        "true",
+			"OBJ1_D":        "1, -2, 100, 3",
+			"OBJ1_E":        "12m",
 			"NESTED_OBJ1_F": "65536",
 		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ1_A": "hello",
 			"NESTED_OBJ1_C": "true",
 			"NESTED_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ1_E": "12m",
 			"NESTED_OBJ1_F": "65536",
 		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ1_A": "hello",
 			"NESTED_OBJ1_B": "14",
 			"NESTED_OBJ1_C": "true",
@@ -315,8 +313,8 @@ func TestUnmarshalNestedObj1Fail(t *testing.T) {
 }
 
 type NestedObj2 struct {
-	A *Obj1 `env:"NESTED_OBJ2_"`
-	B []uint `env:"NESTED_OBJ2_B"`
+	A *Obj1   `env:"NESTED_OBJ2_"`
+	B []uint  `env:"NESTED_OBJ2_B"`
 	C *[]uint `env:"NESTED_OBJ2_C"`
 }
 
@@ -353,7 +351,7 @@ func (o *NestedObj2) String() string {
 }
 
 func TestUnmarshalNestedObj2(t *testing.T) {
-	cases := []TestCase {
+	cases := []TestCase{
 		{
 			map[string]string{
 				"NESTED_OBJ2_OBJ1_A": "hello",
@@ -361,8 +359,8 @@ func TestUnmarshalNestedObj2(t *testing.T) {
 				"NESTED_OBJ2_OBJ1_C": "true",
 				"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 				"NESTED_OBJ2_OBJ1_E": "12m",
-				"NESTED_OBJ2_B": "0, 1, 2, 4",
-				"NESTED_OBJ2_C": "0, 1, 2, 4",
+				"NESTED_OBJ2_B":      "0, 1, 2, 4",
+				"NESTED_OBJ2_C":      "0, 1, 2, 4",
 			},
 			&NestedObj2{
 				A: &Obj1{
@@ -386,66 +384,65 @@ func TestUnmarshalNestedObj2(t *testing.T) {
 
 func TestUnmarshalNestedObj2Fail(t *testing.T) {
 	cases := []map[string]string{
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ2_OBJ1_A": "hello",
 			"NESTED_OBJ2_OBJ1_B": "-14",
 			"NESTED_OBJ2_OBJ1_C": "true",
 			"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ2_OBJ1_E": "12m",
+			"NESTED_OBJ2_B":      "0,1,2,4",
+			"NESTED_OBJ2_C":      "0,1,2,4",
+		},
+		map[string]string{
+			"OBJ1_A":        "abc",
+			"OBJ1_B":        "-14",
+			"OBJ1_C":        "true",
+			"OBJ1_D":        "1, -2, 100, 3",
+			"OBJ1_E":        "12m",
 			"NESTED_OBJ2_B": "0,1,2,4",
 			"NESTED_OBJ2_C": "0,1,2,4",
 		},
-		map[string]string {
-			"OBJ1_A": "abc",
-			"OBJ1_B": "-14",
-			"OBJ1_C": "true",
-			"OBJ1_D": "1, -2, 100, 3",
-			"OBJ1_E": "12m",
-			"NESTED_OBJ2_B": "0,1,2,4",
-			"NESTED_OBJ2_C": "0,1,2,4",
-		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ2_OBJ1_A": "hello",
 			"NESTED_OBJ2_OBJ1_C": "true",
 			"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ2_OBJ1_E": "12m",
-			"NESTED_OBJ2_B": "0,1,2,4",
-			"NESTED_OBJ2_C": "0,1,2,4",
+			"NESTED_OBJ2_B":      "0,1,2,4",
+			"NESTED_OBJ2_C":      "0,1,2,4",
 		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ2_OBJ1_A": "hello",
 			"NESTED_OBJ2_OBJ1_B": "14",
 			"NESTED_OBJ2_OBJ1_C": "true",
 			"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ2_OBJ1_E": "12m",
-			"NESTED_OBJ2_B": "0,1,2,-4",
-			"NESTED_OBJ2_C": "0,1,2,4",
-
+			"NESTED_OBJ2_B":      "0,1,2,-4",
+			"NESTED_OBJ2_C":      "0,1,2,4",
 		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ2_OBJ1_A": "hello",
 			"NESTED_OBJ2_OBJ1_B": "14",
 			"NESTED_OBJ2_OBJ1_C": "true",
 			"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ2_OBJ1_E": "12m",
-			"NESTED_OBJ2_B": "0,1,2,4",
-			"NESTED_OBJ2_C": "0,1,2,",
+			"NESTED_OBJ2_B":      "0,1,2,4",
+			"NESTED_OBJ2_C":      "0,1,2,",
 		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ2_OBJ1_A": "hello",
 			"NESTED_OBJ2_OBJ1_B": "14",
 			"NESTED_OBJ2_OBJ1_C": "true",
 			"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ2_OBJ1_E": "12m",
-			"NESTED_OBJ2_C": "0,1,2",
+			"NESTED_OBJ2_C":      "0,1,2",
 		},
-		map[string]string {
+		map[string]string{
 			"NESTED_OBJ2_OBJ1_A": "hello",
 			"NESTED_OBJ2_OBJ1_B": "14",
 			"NESTED_OBJ2_OBJ1_C": "true",
 			"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 			"NESTED_OBJ2_OBJ1_E": "12m",
-			"NESTED_OBJ2_B": "0,1,2,4",
+			"NESTED_OBJ2_B":      "0,1,2,4",
 		},
 	}
 
@@ -456,7 +453,7 @@ func TestUnmarshalNestedObj2Fail(t *testing.T) {
 }
 
 type EnvMarshalerObj1 struct {
-	A uint `env:"ENV_MARSHALER_OBJ1_A"`
+	A uint   `env:"ENV_MARSHALER_OBJ1_A"`
 	B string `env:"ENV_MARSHALER_OBJ1_B"`
 }
 
@@ -484,7 +481,7 @@ func (o *EnvMarshalerObj1) UnmarshalEnv(env EnvReader) error {
 }
 
 func TestUnmarshalEnvMarshalerObj1(t *testing.T) {
-	cases := []TestCase {
+	cases := []TestCase{
 		{
 			map[string]string{
 				"ENV_MARSHALER_OBJ1_B": "a",
@@ -519,10 +516,9 @@ func TestUnmarshalEnvMarshalerObj1(t *testing.T) {
 }
 
 func TestUnmarshalEnvMarshalerObj1Fail(t *testing.T) {
-	cases := []map[string]string {
-		map[string]string {
-		},
-		map[string]string {
+	cases := []map[string]string{
+		map[string]string{},
+		map[string]string{
 			"ENV_MARSHALER_OBJ1_A": "12",
 		},
 	}

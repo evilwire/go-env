@@ -1,12 +1,11 @@
 package goenv
 
 import (
-	"testing"
-	"reflect"
 	"fmt"
+	"reflect"
+	"testing"
 	"time"
 )
-
 
 func TestUnmarshalString(t *testing.T) {
 	marshaler := &DefaultParser{}
@@ -61,7 +60,7 @@ func TestUnmarshalBool(t *testing.T) {
 	marshaler := DefaultParser{}
 
 	cases := []struct {
-		StrVal string
+		StrVal   string
 		Expected bool
 	}{
 		{"true", true},
@@ -86,7 +85,7 @@ func TestUnmarshalBool(t *testing.T) {
 
 func TestUnmarshalBoolFail(t *testing.T) {
 	marshaler := &DefaultParser{}
-	cases := []string {
+	cases := []string{
 		"not_true",
 		"yes",
 		"no",
@@ -106,8 +105,8 @@ func TestUnmarshalBoolFail(t *testing.T) {
 func TestUnmarshalUint8(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected uint8
 	}{
 		{"0", 0},
@@ -133,8 +132,8 @@ func TestUnmarshalUint8(t *testing.T) {
 
 func TestUnmarshalUint16(t *testing.T) {
 	marshaler := &DefaultParser{}
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected uint16
 	}{
 		{"0", 0},
@@ -163,8 +162,8 @@ func TestUnmarshalUint16(t *testing.T) {
 
 func TestUnmarshalUint32(t *testing.T) {
 	marshaler := &DefaultParser{}
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected uint32
 	}{
 		{"0", 0},
@@ -193,8 +192,8 @@ func TestUnmarshalUint32(t *testing.T) {
 
 func TestUnmarshalUint64(t *testing.T) {
 	marshaler := &DefaultParser{}
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected uint64
 	}{
 		{"0", 0},
@@ -221,8 +220,8 @@ func TestUnmarshalUint64(t *testing.T) {
 
 func TestUnmarshalUint(t *testing.T) {
 	marshaler := &DefaultParser{}
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected uint
 	}{
 		{"0", 0},
@@ -231,7 +230,7 @@ func TestUnmarshalUint(t *testing.T) {
 		{"13", 13},
 
 		// ensure the test is independent of uint max size
-		{fmt.Sprintf("%d", ^uint(0) - 1), ^uint(0) - 1},
+		{fmt.Sprintf("%d", ^uint(0)-1), ^uint(0) - 1},
 		{fmt.Sprintf("%d", ^uint(0)), ^uint(0)},
 	}
 
@@ -250,7 +249,7 @@ func TestUnmarshalUint(t *testing.T) {
 }
 
 func TestUnmarshalUint8Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"256",
 		"-12",
 		"abc",
@@ -269,7 +268,7 @@ func TestUnmarshalUint8Fail(t *testing.T) {
 }
 
 func TestUnmarshalUint16Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"65536",
 		"-12",
 		"abc",
@@ -288,7 +287,7 @@ func TestUnmarshalUint16Fail(t *testing.T) {
 }
 
 func TestUnmarshalUint32Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"4294967296",
 		"-12",
 		"abc",
@@ -307,7 +306,7 @@ func TestUnmarshalUint32Fail(t *testing.T) {
 }
 
 func TestUnmarshalUint64Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"18446744073709551616",
 		"-12",
 		"abc",
@@ -326,7 +325,7 @@ func TestUnmarshalUint64Fail(t *testing.T) {
 }
 
 func TestUnmarshalUintFail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"-12",
 		"abc",
 		"",
@@ -346,8 +345,8 @@ func TestUnmarshalUintFail(t *testing.T) {
 func TestUnmarshalInt8(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected int8
 	}{
 		{"0", 0},
@@ -377,8 +376,8 @@ func TestUnmarshalInt8(t *testing.T) {
 func TestUnmarshalInt16(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected int16
 	}{
 		{"0", 0},
@@ -411,8 +410,8 @@ func TestUnmarshalInt16(t *testing.T) {
 func TestUnmarshalInt32(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected int32
 	}{
 		{"0", 0},
@@ -446,8 +445,8 @@ func TestUnmarshalInt32(t *testing.T) {
 func TestUnmarshalInt64(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected int64
 	}{
 		{"0", 0},
@@ -476,10 +475,10 @@ func TestUnmarshalInt64(t *testing.T) {
 }
 
 func TestUnmarshalInt(t *testing.T) {
-		marshaler := &DefaultParser{}
+	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected int
 	}{
 		{"0", 0},
@@ -510,7 +509,7 @@ func TestUnmarshalInt(t *testing.T) {
 }
 
 func TestUnmarshalInt8Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"",
 		"-129",
 		"128",
@@ -531,7 +530,7 @@ func TestUnmarshalInt8Fail(t *testing.T) {
 }
 
 func TestUnmarshalInt16Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"",
 		"-32769",
 		"32768",
@@ -552,7 +551,7 @@ func TestUnmarshalInt16Fail(t *testing.T) {
 }
 
 func TestUnmarshalInt32Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"",
 		"abc",
 		"123.12",
@@ -572,8 +571,8 @@ func TestUnmarshalInt32Fail(t *testing.T) {
 func TestUnmarshalFloat(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected float64
 	}{
 		{"0", 0.0},
@@ -602,7 +601,7 @@ func TestUnmarshalFloat(t *testing.T) {
 }
 
 func TestUnmarshalFloat32Fail(t *testing.T) {
-	cases := []string {
+	cases := []string{
 		"",
 		"1e100",
 		"1,200.00",
@@ -626,15 +625,15 @@ func TestUnmarshalFloat32Fail(t *testing.T) {
 func TestUnmarshalStringSlice(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected []string
 	}{
 		{"a", []string{"a"}},
 		{"", []string{}},
 		{"a,b", []string{"a", "b"}},
-		{"a,b,c,d,abc", []string{"a","b","c","d","abc"}},
-		{",", []string{"",""}},
+		{"a,b,c,d,abc", []string{"a", "b", "c", "d", "abc"}},
+		{",", []string{"", ""}},
 		{"a ,b", []string{"a", "b"}},
 		{"a, b,", []string{"a", "b", ""}},
 		{",a, b,  ", []string{"", "a", "b", ""}},
@@ -650,8 +649,8 @@ func TestUnmarshalStringSlice(t *testing.T) {
 		} else {
 			if len(c.Expected) != len(a) {
 				t.Errorf(
-					"The expected length differs to actual length. " +
-					"Expected: %d, actual: %d (marshalling \"%s\")",
+					"The expected length differs to actual length. "+
+						"Expected: %d, actual: %d (marshalling \"%s\")",
 					len(c.Expected),
 					len(a),
 					c.StrVal,
@@ -659,7 +658,7 @@ func TestUnmarshalStringSlice(t *testing.T) {
 			}
 
 			for i, elt := range c.Expected {
-				if a[i]	!= elt {
+				if a[i] != elt {
 					t.Errorf("Expected element %i: %s, actual: %s",
 						c.Expected[i],
 						a[i],
@@ -673,13 +672,13 @@ func TestUnmarshalStringSlice(t *testing.T) {
 func TestUnmarshalIntSlice(t *testing.T) {
 	marshaler := &DefaultParser{}
 
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected []int
 	}{
 		{"1", []int{1}},
 		{"1,2,3", []int{1, 2, 3}},
-		{"-4,0,0,1", []int{-4,0,0,1}},
+		{"-4,0,0,1", []int{-4, 0, 0, 1}},
 		{"", []int{}},
 	}
 
@@ -692,8 +691,8 @@ func TestUnmarshalIntSlice(t *testing.T) {
 		} else {
 			if len(c.Expected) != len(a) {
 				t.Errorf(
-					"Expected length differs to actual length. " +
-					"Expected: %d, actual: %d (marshalling \"%s\")",
+					"Expected length differs to actual length. "+
+						"Expected: %d, actual: %d (marshalling \"%s\")",
 					len(c.Expected),
 					len(a),
 					c.StrVal,
@@ -735,8 +734,8 @@ func TestUnmarshalUIntSliceFail(t *testing.T) {
 
 func TestUnmarshalDuration(t *testing.T) {
 	marshaler := &DefaultParser{}
-	cases := []struct{
-		StrVal string
+	cases := []struct {
+		StrVal   string
 		Expected time.Duration
 	}{
 		{"1ns", 1 * time.Nanosecond},
@@ -745,10 +744,10 @@ func TestUnmarshalDuration(t *testing.T) {
 		{"1s", 1 * time.Second},
 		{"1m", 1 * time.Minute},
 		{"1h", 1 * time.Hour},
-		{"1h2m", 1 * time.Hour + 2 * time.Minute},
+		{"1h2m", 1*time.Hour + 2*time.Minute},
 		{"-1m", -1 * time.Minute},
-		{"-1h30m", -1 * time.Hour - 30 * time.Minute},
-		{"1h2m200us", 1 * time.Hour + 2 * time.Minute + 200 * time.Microsecond},
+		{"-1h30m", -1*time.Hour - 30*time.Minute},
+		{"1h2m200us", 1*time.Hour + 2*time.Minute + 200*time.Microsecond},
 	}
 
 	for _, c := range cases {
@@ -771,7 +770,7 @@ func TestUnmarshalDuration(t *testing.T) {
 func TestUnmarshalDurationFail(t *testing.T) {
 
 	marshaler := DefaultParser{}
-	cases := []string {
+	cases := []string{
 		"2 hours",
 		"h3ms",
 		"s",
@@ -792,7 +791,7 @@ func TestUnmarshalDurationFail(t *testing.T) {
 
 func TestUnmarshalUnknownObjFail(t *testing.T) {
 	marshaler := DefaultParser{}
-	obj := struct{ A uint }{ }
+	obj := struct{ A uint }{}
 
 	err := marshaler.Unmarshal("1", &obj)
 	if err == nil {
@@ -822,7 +821,7 @@ func TestParseType(t *testing.T) {
 }
 
 func TestParseTypeFail(t *testing.T) {
-		var a *uint
+	var a *uint
 	uintPtr := reflect.TypeOf(a)
 
 	marshaler := DefaultParser{}

@@ -1,24 +1,21 @@
 package goenv
 
 import (
-	"testing"
-	"reflect"
 	"os"
+	"reflect"
+	"testing"
 )
-
 
 type LookupEnvMock struct {
 	EnvVars map[string]string
-	Arg string
+	Arg     string
 }
-
 
 func (mock *LookupEnvMock) LookupEnv(key string) (string, bool) {
 	mock.Arg = key
 	val, ok := mock.EnvVars[key]
 	return val, ok
 }
-
 
 func TestNewOsEnvReader(t *testing.T) {
 	envReader := NewOsEnvReader()
@@ -31,16 +28,15 @@ func TestNewOsEnvReader(t *testing.T) {
 	}
 }
 
-
 func TestOsEnvReader_LookupEnv(t *testing.T) {
-	osEnv := map[string]string {
+	osEnv := map[string]string{
 		"A": "hello",
 		"B": "",
 	}
 
 	testCases := []struct {
-		Key string
-		HasKey bool
+		Key      string
+		HasKey   bool
 		Expected string
 	}{
 		{
@@ -60,13 +56,12 @@ func TestOsEnvReader_LookupEnv(t *testing.T) {
 		},
 	}
 
-
 	for i, c := range testCases {
 		mockOs := LookupEnvMock{
 			EnvVars: osEnv,
 		}
 
-		envReader := OsEnvReader {
+		envReader := OsEnvReader{
 			lookup: mockOs.LookupEnv,
 		}
 
@@ -91,7 +86,6 @@ func TestOsEnvReader_LookupEnv(t *testing.T) {
 	}
 }
 
-
 func contains(v string, b []string) bool {
 	for _, bV := range b {
 		if bV == v {
@@ -100,7 +94,6 @@ func contains(v string, b []string) bool {
 	}
 	return false
 }
-
 
 func isSubsetOf(a, b []string) bool {
 	for _, v := range a {
@@ -112,93 +105,90 @@ func isSubsetOf(a, b []string) bool {
 	return true
 }
 
-
 func sameKeys(a, b []string) bool {
 	return isSubsetOf(a, b) && isSubsetOf(b, a)
 }
 
-
 func TestOsEnvReader_HasKeys(t *testing.T) {
 	testCases := []struct {
-		Env map[string]string
-		TestKeys []string
-		ExpectHasKeys bool
+		Env               map[string]string
+		TestKeys          []string
+		ExpectHasKeys     bool
 		ExpectMissingKeys []string
 	}{
 		{
-			Env: map[string]string {
+			Env: map[string]string{
 				"A": "hello",
 				"B": "goodbye",
 				"C": "",
 			},
-			TestKeys: []string {
+			TestKeys: []string{
 				"A",
 			},
-			ExpectHasKeys: true,
-			ExpectMissingKeys: []string {},
+			ExpectHasKeys:     true,
+			ExpectMissingKeys: []string{},
 		},
 		{
-			Env: map[string]string {
+			Env: map[string]string{
 				"A": "hello",
 				"B": "goodbye",
 				"C": "",
 			},
-			TestKeys: []string {
-			},
-			ExpectHasKeys: true,
-			ExpectMissingKeys: []string {},
+			TestKeys:          []string{},
+			ExpectHasKeys:     true,
+			ExpectMissingKeys: []string{},
 		},
 		{
-			Env: map[string]string {
+			Env: map[string]string{
 				"A": "hello",
 				"B": "goodbye",
 				"C": "",
 			},
-			TestKeys: []string {
+			TestKeys: []string{
 				"A", "B", "C",
 			},
-			ExpectHasKeys: true,
-			ExpectMissingKeys: []string {},
+			ExpectHasKeys:     true,
+			ExpectMissingKeys: []string{},
 		},
 		{
-			Env: map[string]string {
+			Env: map[string]string{
 				"A": "hello",
 				"B": "goodbye",
 				"C": "",
 			},
-			TestKeys: []string {
+			TestKeys: []string{
 				"D",
 			},
 			ExpectHasKeys: false,
-			ExpectMissingKeys: []string {
+			ExpectMissingKeys: []string{
 				"D",
 			},
 		},
 		{
-			Env: map[string]string {
+			Env: map[string]string{
 				"A": "hello",
 				"B": "goodbye",
 				"C": "",
 			},
-			TestKeys: []string {
+			TestKeys: []string{
 				"D", "E",
 			},
 			ExpectHasKeys: false,
-			ExpectMissingKeys: []string {
+			ExpectMissingKeys: []string{
 				"D", "E",
 			},
 		},
 		{
-			Env: map[string]string {
+			Env: map[string]string{
 				"A": "hello",
 				"B": "goodbye",
 				"C": "",
 			},
-			TestKeys: []string {
+			TestKeys: []string{
 				"A", "D", "E",
 			},
 			ExpectHasKeys: false,
-			ExpectMissingKeys: []string {
+			ExpectMissingKeys: []string{
 				"D", "E",
 			},
 		},
@@ -209,7 +199,7 @@ func TestOsEnvReader_HasKeys(t *testing.T) {
 			EnvVars: c.Env,
 		}
 
-		envreader := OsEnvReader {
+		envreader := OsEnvReader{
 			lookup: mockOs.LookupEnv,
 		}
 

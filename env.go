@@ -32,11 +32,10 @@
 package goenv
 
 import (
+	"github.com/pkg/errors"
 	"os"
 	"reflect"
-	"github.com/pkg/errors"
 )
-
 
 // Interface for that expresses the ability to look up values from the environment
 // via environment variables (LookupEnv) and the ability to query the existence of
@@ -53,16 +52,15 @@ type EnvReader interface {
 	HasKeys([]string) (bool, []string)
 }
 
-
 // An environment variable reader that implements that EnvReader interface by using the
 // os.LookupEnv method.
-type OsEnvReader struct{
+type OsEnvReader struct {
 	lookup func(key string) (string, bool)
 }
 
 // Creates a new instance of OsEnvReader
 func NewOsEnvReader() *OsEnvReader {
-	return &OsEnvReader {
+	return &OsEnvReader{
 		lookup: os.LookupEnv,
 	}
 }

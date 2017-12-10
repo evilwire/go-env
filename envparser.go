@@ -2,16 +2,15 @@
 package goenv
 
 import (
-	"reflect"
-	"time"
-	"strings"
-	"strconv"
 	"github.com/pkg/errors"
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
 )
 
-
 // A default way to parse a string into a specific primitive or pointer.
-type DefaultParser struct { }
+type DefaultParser struct{}
 
 // Parse a string value for a specific type given by reflect.Type.
 // For example, ParseType might accept str="2" and reflect.Type=reflect.Uint
