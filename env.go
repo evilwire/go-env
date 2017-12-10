@@ -263,22 +263,16 @@ func (marshaler *DefaultEnvMarshaler) Unmarshal(i interface{}) error {
 	// of the type
 	if marshaler.implementsUnmarshal(t) {
 		envUnmarsh, _ := i.(EnvUnmarshaler)
-		err := envUnmarsh.UnmarshalEnv(marshaler.Environment)
-		if err != nil {
-			return err
-		}
-
-		return nil
+		return envUnmarsh.UnmarshalEnv(marshaler.Environment)
 	}
 
-	if t.Kind() == reflect.Struct {
-		val, err := marshaler.unmarshalStruct(t, "")
-		if err != nil {
-			return err
-		}
+	if t.Kind() != reflect.Struct {
+		return errors.New("Cannot unmarshal non-struct, non-EnvMarshaler objects.")
+	}
+
+	val, err := marshaler.unmarshalStruct(t, "")
+	if err == nil {
 		v.Set(val)
-		return nil
 	}
-
-	return errors.New("Cannot unmarshal non-struct, non-EnvMarshaler objects.")
+	return err
 }
