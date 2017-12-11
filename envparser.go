@@ -1,4 +1,4 @@
-// Defines an object that parses values from strings.
+// Package goenv defines an object that parses values from strings.
 package goenv
 
 import (
@@ -9,10 +9,10 @@ import (
 	"time"
 )
 
-// A default way to parse a string into a specific primitive or pointer.
+// DefaultParser - A default way to parse a string into a specific primitive or pointer.
 type DefaultParser struct{}
 
-// Parse a string value for a specific type given by reflect.Type.
+// ParseType - Parses a string value for a specific type given by reflect.Type.
 // For example, ParseType might accept str="2" and reflect.Type=reflect.Uint
 // and parses the uint value of 2 returned as reflect.Value.
 //
@@ -133,7 +133,7 @@ func (marshaler *DefaultParser) ParseType(str string, t reflect.Type) (reflect.V
 	return val, nil
 }
 
-// Unmarshals a string into any one of the string-parseable types, which include
+// Unmarshal - Unmarshals a string into any one of the string-parseable types, which include
 // (pointers of) numeric types, strings, booleans, arrays and slices. The method also
 // handles Duration separately.
 //
@@ -153,9 +153,9 @@ func (marshaler *DefaultParser) Unmarshal(val string, i interface{}) error {
 	// then we should raise an error immediately
 	if !v.CanSet() {
 		if tName != "" {
-			return errors.Errorf("Cannot serialize into an unsettable %s type.", tName)
+			return errors.Errorf("cannot serialize into an unsettable %s type", tName)
 		}
-		return errors.New("Cannot serialize into an unsettable type.")
+		return errors.New("cannot serialize into an unsettable type")
 	}
 
 	unmarshaledVal, err := marshaler.ParseType(val, t)
