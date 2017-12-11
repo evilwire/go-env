@@ -195,29 +195,27 @@ func (marshaler *DefaultEnvMarshaler) unmarshalStruct(t reflect.Type, envPrefix 
 	parser := &DefaultParser{}
 
 	tKind := t.Kind()
-	if tKind == reflect.Struct {
-		for i := 0; i < t.NumField(); i++ {
-			fieldStruct := t.Field(i)
-			fieldEnvTag := fieldStruct.Tag.Get("env")
-
-			if fieldEnvTag != "" {
-				fieldEnvTag = envPrefix + fieldEnvTag
-				structFieldVal := val.Field(i)
-				err := marshaler.unmarshalField(
-					fieldStruct,
-					structFieldVal,
-					fieldEnvTag,
-					parser)
-				if err != nil {
-					return val, err
-				}
-			}
-		}
-
-		return val, nil
+	if tKind != reflect.Struct {
+		return val, errors.Errorf("cannot unmarshal non-struct type %s", tKind)
 	}
 
-	return val, errors.Errorf("cannot unmarshal non-struct type %s", tKind)
+	for i := 0; i < t.NumField(); i++ {
+		fieldStruct := t.Field(i)
+		fieldEnvTag := fieldStruct.Tag.Get("env")
+
+		if fieldEnvTag == "" {
+			continue
+		}
+
+		fieldEnvTag = envPrefix + fieldEnvTag
+		structFieldVal := val.Field(i)
+		err := marshaler.unmarshalField(fieldStruct, structFieldVal, fieldEnvTag, parser)
+		if err != nil {
+			return val, err
+		}
+	}
+
+	return val, nil
 }
 
 // Unmarshal - Unmarshals a given value from environment variables. It accepts a pointer to a given
