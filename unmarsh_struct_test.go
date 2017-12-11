@@ -84,24 +84,26 @@ type Obj1 struct {
 }
 
 func (o *Obj1) Equal(i interface{}) bool {
-	if other, ok := i.(*Obj1); !ok {
+	other, ok := i.(*Obj1)
+	if !ok {
 		return false
-	} else {
-		firstly := other.A == o.A &&
-			other.B == o.B &&
-			other.C == o.C &&
-			other.E == o.E
+	}
 
-		if !firstly {
+	firstly := other.A == o.A &&
+		other.B == o.B &&
+		other.C == o.C &&
+		other.E == o.E
+
+	if !firstly {
+		return false
+	}
+
+	for index, elt := range other.D {
+		if other.D[index] != elt {
 			return false
 		}
-
-		for index, elt := range other.D {
-			if other.D[index] != elt {
-				return false
-			}
-		}
 	}
+
 	return true
 }
 
@@ -202,11 +204,12 @@ type Obj2 struct {
 }
 
 func (o *Obj2) Equal(i interface{}) bool {
-	if other, ok := i.(*Obj2); !ok {
+	other, ok := i.(*Obj2)
+	if !ok {
 		return false
-	} else {
-		return *(other.A) == *(o.A)
 	}
+
+	return *(other.A) == *(o.A)
 }
 
 func (o *Obj2) String() string {
@@ -236,11 +239,11 @@ type NestedObj1 struct {
 }
 
 func (o *NestedObj1) Equal(i interface{}) bool {
-	if other, ok := i.(*NestedObj1); !ok {
+	other, ok := i.(*NestedObj1)
+	if !ok {
 		return false
-	} else {
-		return other.A.Equal(&(o.A)) && other.F == o.F
 	}
+	return other.A.Equal(&(o.A)) && other.F == o.F
 }
 
 func (o *NestedObj1) String() string {
@@ -325,28 +328,28 @@ type NestedObj2 struct {
 }
 
 func (o *NestedObj2) Equal(i interface{}) bool {
-	if other, ok := i.(*NestedObj2); !ok {
+	other, ok := i.(*NestedObj2)
+	if !ok {
 		return false
-	} else {
+	}
 
-		if !other.A.Equal(o.A) {
+	if !other.A.Equal(o.A) {
+		return false
+	}
+
+	for i, b := range other.B {
+		if o.B[i] != b {
 			return false
 		}
-
-		for i, b := range other.B {
-			if o.B[i] != b {
-				return false
-			}
-		}
-
-		for i, c := range *(other.C) {
-			if (*(o.C))[i] != c {
-				return false
-			}
-		}
-
-		return true
 	}
+
+	for i, c := range *(other.C) {
+		if (*(o.C))[i] != c {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (o *NestedObj2) String() string {
@@ -464,11 +467,11 @@ type EnvMarshalerObj1 struct {
 }
 
 func (o *EnvMarshalerObj1) Equal(i interface{}) bool {
-	if other, ok := i.(*EnvMarshalerObj1); !ok {
+	other, ok := i.(*EnvMarshalerObj1)
+	if !ok {
 		return false
-	} else {
-		return other.A == o.A && other.B == o.B
 	}
+	return other.A == o.A && other.B == o.B
 }
 
 func (o *EnvMarshalerObj1) String() string {
@@ -540,11 +543,11 @@ func TestUnmarshalEnvMarshalerObj1Fail(t *testing.T) {
 type EnvMarshalerObj2 uint
 
 func (o *EnvMarshalerObj2) Equal(i interface{}) bool {
-	if other, ok := i.(*EnvMarshalerObj2); !ok {
+	other, ok := i.(*EnvMarshalerObj2)
+	if !ok {
 		return false
-	} else {
-		return uint(*o) == uint(*other)
 	}
+	return uint(*o) == uint(*other)
 }
 
 func (o *EnvMarshalerObj2) String() string {
@@ -570,11 +573,11 @@ func TestUnmarshalEnvMarshalerObj2(t *testing.T) {
 type NonEnvMarshaler uint
 
 func (o *NonEnvMarshaler) Equal(i interface{}) bool {
-	if other, ok := i.(*EnvMarshalerObj2); !ok {
+	other, ok := i.(*EnvMarshalerObj2)
+	if !ok {
 		return false
-	} else {
-		return uint(*o) == uint(*other)
 	}
+	return uint(*o) == uint(*other)
 }
 
 func (o *NonEnvMarshaler) String() string {
