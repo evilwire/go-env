@@ -32,12 +32,21 @@ func (marshaler *DefaultParser) ParseType(str string, t reflect.Type) (reflect.V
 		// do duration stuff here
 		duration, err := time.ParseDuration(str)
 		if err != nil {
-			return val, errors.Wrapf(err, "Could not parse duration \"%s\"", str)
+			return val, errors.Wrapf(err, "could not parse duration \"%s\"", str)
 		}
 
 		durVal := reflect.ValueOf(duration)
 		val.Set(durVal)
 
+		return val, nil
+	} else if tName == "Time" {
+		t, err := time.Parse(time.RFC3339, str)
+		if err != nil {
+			return val, errors.Wrapf(err, "could not parse duration \"%s\"", str)
+		}
+
+		timeVal := reflect.ValueOf(t)
+		val.Set(timeVal)
 		return val, nil
 	}
 

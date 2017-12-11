@@ -110,6 +110,55 @@ func (marshaler *DefaultEnvMarshaler) implementsUnmarshal(t reflect.Type) bool {
 	return reflect.PtrTo(t).Implements(modelType)
 }
 
+func (marshaler *DefaultEnvMarshaler) unmarshalType(
+	fieldType reflect.Type, fieldEnvTag string, parser *DefaultParser,
+) (*reflect.Value, error) {
+	envVal, hasVal := marshaler.Environment.LookupEnv(fieldEnvTag)
+	if !hasVal {
+		return nil, errors.Errorf(
+			"cannot retrieve any value from environment var %s",
+			fieldEnvTag,
+		)
+	}
+
+	fieldVal, parseErr := parser.ParseType(envVal, fieldType)
+	if parseErr != nil {
+		return nil, errors.Wrapf(parseErr,
+			"cannot unmarshal %s to type %s (Env: %s)",
+			envVal,
+			fieldType.Name(),
+			fieldEnvTag,
+		)
+	}
+
+	return &fieldVal, nil
+}
+
+func (marshaler *DefaultEnvMarshaler) unmarshalNonPtr(
+	fieldType reflect.Type,
+	fieldEnvTag string,
+	parser *DefaultParser,
+) (*reflect.Value, error) {
+	if fieldType.Name() == "Time" {
+		return marshaler.unmarshalType(fieldType, fieldEnvTag, parser)
+	}
+
+	if fieldType.Kind() == reflect.Struct {
+		fieldVal, err := marshaler.unmarshalStruct(fieldType, fieldEnvTag)
+		if err != nil {
+			return nil, errors.Wrapf(
+				err,
+				"cannot unmarshal %s to type %s",
+				fieldEnvTag,
+				fieldType.Name(),
+			)
+		}
+		return &fieldVal, nil
+	}
+
+	return marshaler.unmarshalType(fieldType, fieldEnvTag, parser)
+}
+
 // Unmarshals a field in a struct.
 func (marshaler *DefaultEnvMarshaler) unmarshalField(
 	fieldStruct reflect.StructField,
@@ -122,74 +171,21 @@ func (marshaler *DefaultEnvMarshaler) unmarshalField(
 
 	if structFieldType.Kind() == reflect.Ptr {
 		indirectType := structFieldType.Elem()
-		if indirectType.Kind() == reflect.Struct {
-			indirectVal, unmarshalErr := marshaler.unmarshalStruct(
-				indirectType, fieldEnvTag)
-			if unmarshalErr != nil {
-				return errors.Wrapf(
-					unmarshalErr,
-					"Cannot unmarshal %s to field %s in type",
-					fieldEnvTag,
-					fieldName,
-				)
-			}
-			structFieldVal.Set(indirectVal.Addr())
-			return nil
-		}
-
-		envVal, hasVal := marshaler.Environment.LookupEnv(fieldEnvTag)
-		if !hasVal {
-			return errors.Errorf(
-				"Cannot retrieve any value from environment var %s",
-				fieldEnvTag,
-			)
-		}
-		indirectVal, parseErr := parser.ParseType(envVal, indirectType)
-		if parseErr != nil {
-			return errors.Wrapf(parseErr,
-				"Cannot unmarshal %s to field %s in type (Env: %s)",
-				fieldEnvTag,
-				fieldName,
-				envVal,
-			)
+		indirectVal, unmarshErr := marshaler.unmarshalNonPtr(indirectType, fieldEnvTag, parser)
+		if unmarshErr != nil {
+			return errors.Wrapf(unmarshErr, "error unmarshaling field %s", fieldName)
 		}
 		structFieldVal.Set(indirectVal.Addr())
 		return nil
 
 	}
 
-	if structFieldType.Kind() == reflect.Struct {
-		fieldVal, err := marshaler.unmarshalStruct(
-			structFieldType, fieldEnvTag)
-		if err != nil {
-			return errors.Wrapf(
-				err,
-				"Cannot unmarshal %s to field %s in type",
-				fieldEnvTag,
-				fieldName,
-			)
-		}
-		structFieldVal.Set(fieldVal)
-		return nil
+	fieldVal, unmarshErr := marshaler.unmarshalNonPtr(structFieldType, fieldEnvTag, parser)
+	if unmarshErr != nil {
+		return errors.Wrapf(unmarshErr, "error unmarshaling field %s", fieldName)
 	}
 
-	envVal, hasVal := marshaler.Environment.LookupEnv(fieldEnvTag)
-	if !hasVal {
-		return errors.Errorf(
-			"Cannot retrieve any value from environment var %s",
-			fieldEnvTag,
-		)
-	}
-	fieldVal, parseErr := parser.ParseType(envVal, structFieldType)
-	if parseErr != nil {
-		return errors.Wrapf(parseErr,
-			"Cannot unmarshal %s to field %s in type (Env: %s)",
-			fieldEnvTag,
-			fieldName,
-			envVal,
-		)
-	}
-	structFieldVal.Set(fieldVal)
+	structFieldVal.Set(*fieldVal)
 	return nil
 }
 
@@ -221,7 +217,7 @@ func (marshaler *DefaultEnvMarshaler) unmarshalStruct(t reflect.Type, envPrefix 
 		return val, nil
 	}
 
-	return val, errors.Errorf("Cannot unmarshal non-struct type %s", tKind)
+	return val, errors.Errorf("cannot unmarshal non-struct type %s", tKind)
 }
 
 // Unmarshal - Unmarshals a given value from environment variables. It accepts a pointer to a given

@@ -81,6 +81,7 @@ type Obj1 struct {
 	C bool          `env:"OBJ1_C"`
 	D []int         `env:"OBJ1_D"`
 	E time.Duration `env:"OBJ1_E"`
+	F time.Time     `env:"OBJ1_F"`
 }
 
 func (o *Obj1) Equal(i interface{}) bool {
@@ -126,6 +127,7 @@ func TestUnmarshalObj1(t *testing.T) {
 				"OBJ1_C": "true",
 				"OBJ1_D": "1, -2, 100, 3",
 				"OBJ1_E": "12m",
+				"OBJ1_F": "2017-10-05T22:12:59Z",
 			},
 			&Obj1{
 				A: "hello",
@@ -133,6 +135,7 @@ func TestUnmarshalObj1(t *testing.T) {
 				C: true,
 				D: []int{1, -2, 100, 3},
 				E: 12 * time.Minute,
+				F: time.Date(2017, time.October, 05, 22, 12, 59, 0, time.UTC),
 			},
 		},
 		{
@@ -142,6 +145,7 @@ func TestUnmarshalObj1(t *testing.T) {
 				"OBJ1_C": "false",
 				"OBJ1_D": "1",
 				"OBJ1_E": "1h12m",
+				"OBJ1_F": "2017-10-05T22:12:59Z",
 			},
 			&Obj1{
 				A: "",
@@ -149,6 +153,7 @@ func TestUnmarshalObj1(t *testing.T) {
 				C: false,
 				D: []int{1},
 				E: 1*time.Hour + 12*time.Minute,
+				F: time.Date(2017, time.October, 05, 22, 12, 59, 0, time.UTC),
 			},
 		},
 		{
@@ -158,6 +163,7 @@ func TestUnmarshalObj1(t *testing.T) {
 				"OBJ1_C": "true",
 				"OBJ1_D": "",
 				"OBJ1_E": "0ns",
+				"OBJ1_F": "2017-10-05T22:12:59Z",
 			},
 			&Obj1{
 				A: "亲蛙",
@@ -165,6 +171,7 @@ func TestUnmarshalObj1(t *testing.T) {
 				C: true,
 				D: []int{},
 				E: 0 * time.Nanosecond,
+				F: time.Date(2017, time.October, 05, 22, 12, 59, 0, time.UTC),
 			},
 		},
 	}
@@ -235,7 +242,7 @@ func TestUnmarshalObj2(t *testing.T) {
 
 type NestedObj1 struct {
 	A Obj1 `env:"NESTED_"`
-	F uint `env:"NESTED_OBJ1_F"`
+	G uint `env:"NESTED_OBJ1_G"`
 }
 
 func (o *NestedObj1) Equal(i interface{}) bool {
@@ -243,12 +250,12 @@ func (o *NestedObj1) Equal(i interface{}) bool {
 	if !ok {
 		return false
 	}
-	return other.A.Equal(&(o.A)) && other.F == o.F
+	return other.A.Equal(&(o.A)) && other.G == o.G
 }
 
 func (o *NestedObj1) String() string {
 	aStr := fmt.Sprintf("%+v", o.A)
-	return fmt.Sprintf("{A: %s, F: %d}", aStr, o.F)
+	return fmt.Sprintf("{A: %s, F: %d}", aStr, o.G)
 }
 
 func TestUnmarshalNestedObj1(t *testing.T) {
@@ -260,7 +267,8 @@ func TestUnmarshalNestedObj1(t *testing.T) {
 				"NESTED_OBJ1_C": "true",
 				"NESTED_OBJ1_D": "1, -2, 100, 3",
 				"NESTED_OBJ1_E": "12m",
-				"NESTED_OBJ1_F": "65536",
+				"NESTED_OBJ1_F": "2001-01-12T04:01:01Z",
+				"NESTED_OBJ1_G": "65536",
 			},
 			&NestedObj1{
 				A: Obj1{
@@ -269,8 +277,9 @@ func TestUnmarshalNestedObj1(t *testing.T) {
 					C: true,
 					D: []int{1, -2, 100, 3},
 					E: 12 * time.Minute,
+					F: time.Date(2001, time.January, 12, 4, 1, 1, 0, time.UTC),
 				},
-				F: 65536,
+				G: 65536,
 			},
 		},
 	}
@@ -368,6 +377,7 @@ func TestUnmarshalNestedObj2(t *testing.T) {
 				"NESTED_OBJ2_OBJ1_C": "true",
 				"NESTED_OBJ2_OBJ1_D": "1, -2, 100, 3",
 				"NESTED_OBJ2_OBJ1_E": "12m",
+				"NESTED_OBJ2_OBJ1_F": "1965-10-02T23:59:59Z",
 				"NESTED_OBJ2_B":      "0, 1, 2, 4",
 				"NESTED_OBJ2_C":      "0, 1, 2, 4",
 			},
@@ -378,6 +388,7 @@ func TestUnmarshalNestedObj2(t *testing.T) {
 					C: true,
 					D: []int{1, -2, 100, 3},
 					E: 12 * time.Minute,
+					F: time.Date(1965, time.October, 2, 23, 59, 59, 0, time.UTC),
 				},
 				B: []uint{0, 1, 2, 4},
 				C: &[]uint{0, 1, 2, 4},
