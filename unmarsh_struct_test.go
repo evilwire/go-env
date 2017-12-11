@@ -109,7 +109,7 @@ func (o *Obj1) Equal(i interface{}) bool {
 }
 
 func (o *Obj1) String() string {
-	return fmt.Sprintf("%v", map[string]interface{} {
+	return fmt.Sprintf("%v", map[string]interface{}{
 		"A": o.A,
 		"B": o.B,
 		"C": o.C,
@@ -486,7 +486,7 @@ func (o *EnvMarshalerObj1) Equal(i interface{}) bool {
 }
 
 func (o *EnvMarshalerObj1) String() string {
-	return fmt.Sprintf("%v", map[string]interface{} {
+	return fmt.Sprintf("%v", map[string]interface{}{
 		"A": o.A,
 		"B": o.B,
 	})
