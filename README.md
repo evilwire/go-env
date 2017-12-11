@@ -204,7 +204,7 @@ func doStuff(config *Config) error {
 }
 
 
-func setup(env *goenv.EnvReader) (*Config, error) {
+func setup(env goenv.EnvReader) (*Config, error) {
         config := Config {}
         marshaller := goenv.DefaultEnvMarshaler{ env }
         
