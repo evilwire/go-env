@@ -1,12 +1,17 @@
 language: go
 
 go:
-  - 1.7
-  - master
+  - 1.5.x
+  - 1.6.x
+  - 1.7.x
+  - 1.8.x
+  - tip
 
-script: go test -v -coverpkg . -coverprofile cover.out
+before_install:
+ - go get -t -v ./...
 
-# not sure what the heck this is, just doing what code climate
-# is telling me to do
-env:
-  CODECLIMATE_REPO_TOKEN: 4222ae2e27192b145e217cef28904ef975a640c2b119e4bd3f5554ce70d01389
+script: 
+ - go test -race -coverprofile coverage.txt -covermode=atomic
+
+after_success:
+ - bash < (curl -s https://codecov.io/bash)
